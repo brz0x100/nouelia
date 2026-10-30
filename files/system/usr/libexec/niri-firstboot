@@ -1,0 +1,37 @@
+#!/bin/sh
+set -eu
+
+log() {
+    printf 'niri-firstboot: %s\n' "$*" >&2
+}
+
+ensure_group_entry() {
+    group="$1"
+    if ! grep -q "^${group}:" /etc/group; then
+        gid="$(getent group "$group" | cut -d: -f3)"
+        if [ -n "$gid" ]; then
+            printf '%s:x:%s:\n' "$group" "$gid" >> /etc/group
+        fi
+    fi
+}
+
+ensure_group_entry video
+ensure_group_entry render
+usermod -aG video,render greetd 2>/dev/null || \
+    log "could not add greetd to video/render"
+
+install -d -o greetd -g greetd -m 0750 /var/lib/noctalia-greeter
+GREETER_USER=greetd noctalia-greeter-apply-appearance --setup-system || \
+    log "greeter appearance setup failed; continuing"
+
+FIRSTBOOT_CONF=/etc/niri-image/firstboot.conf
+if [ -f "$FIRSTBOOT_CONF" ] && [ ! -e /var/lib/niri-image/.user-created ]; then
+    . "$FIRSTBOOT_CONF"
+    if ! getent passwd "$FIRST_USER" >/dev/null; then
+        useradd -m -G wheel -s /bin/bash "$FIRST_USER"
+        printf '%s:%s\n' "$FIRST_USER" "$FIRST_PASSWORD_HASH" | chpasswd -e
+        log "created desktop user $FIRST_USER"
+    fi
+    install -d -m 0755 /var/lib/niri-image
+    touch /var/lib/niri-image/.user-created
+fi
