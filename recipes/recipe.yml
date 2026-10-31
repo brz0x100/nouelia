@@ -25,34 +25,114 @@ modules:
       # Keep niri's recommends (waybar, swaylock) out of the image.
       install-weak-deps: false
       packages:
+        # desktop
         - niri
         - noctalia
-        # noctalia-greeter links libwlroots-0.20 directly.
-        - wlroots
-        - greetd
-        # dbus-tools provides dbus-update-activation-environment for niri-session;
-        # dbus-daemon provides dbus-run-session for the Noctalia greeter.
-        - dbus-tools
-        - dbus-daemon
-        - accountsservice
-        - gnome-keyring
-        - gnome-keyring-pam
-        - xwayland-satellite
+        - wlroots # noctalia-greeter links libwlroots-0.20 directly.
+        - xdg-desktop-portal-wlr
         - xdg-desktop-portal-gtk
         - xdg-desktop-portal-gnome
-        - pipewire
-        - wireplumber
-        - NetworkManager
-        - bluez
+        
+        # environment
+        - fzf
+        - tuned-ppd
+        - xwayland-satellite
+        - polkit
+        - xfce-polkit
+        - fprintd-pam
+        - xdg-user-dirs
+        - greetd
+        - dbus-tools # dbus-tools provides dbus-update-activation-environment for niri-session;
+        - dbus-daemon # dbus-daemon provides dbus-run-session for the Noctalia greeter.
+        - wl-clipboard
+        - qt5-qtwayland
+        - qt6-qtwayland
+        - vulkan-validation-layers
+        - vulkan-tools
+        - google-noto-emoji-fonts
+        - gnome-disk-utility
+        - accountsservice
+        - ddcutil
+        - openssl
+        - gnome-keyring
+        - gnome-keyring-pam
         - upower
-        - brightnessctl
-        - playerctl
-        - alacritty
-        - fuzzel
         - flatpak
+        - vim
+        - msedit
+        - p7zip
+        - distrobox
+        - steam-devices
+        
+        # sound
+        - wireplumber
+        - pipewire
+        - alsa-firmware
+        - playerctl
+        - pamixer
+        - pulseaudio-utils
+
+        # networking
+        - NetworkManager
+        - NetworkManager-openvpn
+        - NetworkManager-openvpn-gnome
+        - NetworkManager-openconnect
+        - NetworkManager-openconnect-gnome
+        - bluez
+        - bluez-tools
+        - firewall-config
+
+        # file manager
+        - thunar
+        - thunar-archive-plugin 
+        - thunar-volman
+        - xarchiver
+        - imv
+        - p7zip
+        - gvfs-mtp
+        - gvfs-gphoto2
+        - gvfs-smb
+        - gvfs-nfs
+        - gvfs-fuse
+        - gvfs-archive
+
+        # display
+        - wlr-randr
+        - wlsunset
+        - brightnessctl
+        - kanshi
+
+        # theme and GUI
+        - paper-icon-theme
+        - papirus-icon-theme
+
         - repo: terra
           packages:
+            - ghostty
             - noctalia-greeter
+
+  - type: default-flatpaks
+    configurations:
+      - scope: user
+        repo:
+          title: Flathub (user)
+        install:
+          - io.github.kolunmi.Bazaar
+      
+      - scope: system
+        notify: true
+        repo:
+          title: Flathub (system)
+        install:
+          - com.github.tchx84.Flatseal
+          - org.gnome.Loupe
+          - org.gnome.Showtime
+          - org.videolan.VLC
+          - io.github.Qalculate
+          - org.gnome.gedit
+          - org.gnome.Music
+          - net.nokyan.Resources
+          - org.gnome.clocks
 
   # Fail the build on config errors instead of discovering them at first boot.
   - type: script
