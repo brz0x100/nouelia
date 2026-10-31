@@ -646,8 +646,8 @@ window-rule {
 window-rule {
     match app-id="dev.noctalia.Noctalia"
     open-floating true
-    default-column-width { fixed 1080; }
-    default-window-height { fixed 920; }
+    default-column-width { proportion 0.5; }
+    default-window-height { proportion 0.7; }
 }
 
 // Wallpaper option 2: keep the Noctalia wallpaper layer behind windows.
