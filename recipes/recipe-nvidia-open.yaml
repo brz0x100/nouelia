@@ -18,9 +18,9 @@ modules:
   - type: script
     scripts:
       - install-nvidia-open.sh
-      - setearlyloading.sh
-      - setdrmvariables.sh
-      - removeunusedrepos.sh
+      - set-earlyloading.sh
+      - set-drmvariables.sh
+      - remove-unusedrepos.sh
       - validate-nvidia.sh
 
   # Validate the shared desktop after the NVIDIA changes.
