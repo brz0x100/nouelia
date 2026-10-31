@@ -1,0 +1,135 @@
+---
+# yaml-language-server: $schema=https://schema.blue-build.org/module-list-v1.json
+modules:
+  - type: files
+    files:
+      - source: system
+        destination: /
+
+  # Terra via the upstream-recommended repofrompath + terra-release flow.
+  - type: script
+    scripts:
+      - install-terra-release.sh
+
+  - type: dnf
+    install:
+      # Keep niri's recommends (waybar, swaylock) out of the image.
+      install-weak-deps: false
+      packages:
+        # desktop
+        - niri
+        - noctalia
+        - wlroots # noctalia-greeter links libwlroots-0.20 directly.
+        - xdg-desktop-portal-wlr
+        - xdg-desktop-portal-gtk
+        - xdg-desktop-portal-gnome
+
+        # environment
+        - fzf
+        # ghostty is from Terra, but its deps (gtk4-layer-shell, ncurses-term,
+        # ghostty-terminfo) are in Fedora. Keep it in the general transaction
+        # so dnf can resolve them; the Terra-only transaction cannot.
+        - ghostty
+        - tuned-ppd
+        - xwayland-satellite
+        - polkit
+        - xfce-polkit
+        - fprintd-pam
+        - xdg-user-dirs
+        - greetd
+        # dbus-update-activation-environment is required by niri-session.
+        - dbus-tools
+        # dbus-run-session is required by the Noctalia greeter.
+        - dbus-daemon
+        - wl-clipboard
+        - qt5-qtwayland
+        - qt6-qtwayland
+        - vulkan-validation-layers
+        - vulkan-tools
+        - google-noto-emoji-fonts
+        - gnome-disk-utility
+        - accountsservice
+        - ddcutil
+        - openssl
+        - gnome-keyring
+        - gnome-keyring-pam
+        - upower
+        - flatpak
+        - vim
+        - msedit
+        - p7zip
+        - distrobox
+        - steam-devices
+
+        # sound
+        - wireplumber
+        - pipewire
+        - alsa-firmware
+        - playerctl
+        - pamixer
+        - pulseaudio-utils
+
+        # networking
+        - NetworkManager
+        - NetworkManager-openvpn
+        - NetworkManager-openvpn-gnome
+        - NetworkManager-openconnect
+        - NetworkManager-openconnect-gnome
+        - bluez
+        - bluez-tools
+        - firewall-config
+
+        # file manager
+        - thunar
+        - thunar-archive-plugin
+        - thunar-volman
+        - xarchiver
+        - imv
+        - gvfs-mtp
+        - gvfs-gphoto2
+        - gvfs-smb
+        - gvfs-nfs
+        - gvfs-fuse
+        - gvfs-archive
+
+        # display
+        - wlr-randr
+        - wlsunset
+        - brightnessctl
+        - kanshi
+
+        # theme and GUI
+        - paper-icon-theme
+        - papirus-icon-theme
+
+        - repo: terra
+          packages:
+            - noctalia-greeter
+
+  - type: default-flatpaks
+    configurations:
+      - scope: user
+        repo:
+          title: Flathub (user)
+        install:
+          - io.github.kolunmi.Bazaar
+
+      - scope: system
+        notify: true
+        repo:
+          title: Flathub (system)
+        install:
+          - com.github.tchx84.Flatseal
+          - org.gnome.Loupe
+          - org.gnome.Showtime
+          - org.videolan.VLC
+          - io.github.Qalculate
+          - org.gnome.gedit
+          - org.gnome.Music
+          - net.nokyan.Resources
+          - org.gnome.clocks
+
+  - type: systemd
+    system:
+      enabled:
+        - greetd
