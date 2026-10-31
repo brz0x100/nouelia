@@ -25,13 +25,27 @@ GREETER_USER=greetd noctalia-greeter-apply-appearance --setup-system || \
     log "greeter appearance setup failed; continuing"
 
 FIRSTBOOT_CONF=/etc/niri-image/firstboot.conf
-if [ -f "$FIRSTBOOT_CONF" ] && [ ! -e /var/lib/niri-image/.user-created ]; then
+if [ -f "$FIRSTBOOT_CONF" ]; then
     . "$FIRSTBOOT_CONF"
-    if ! getent passwd "$FIRST_USER" >/dev/null; then
-        useradd -m -G wheel -s /bin/bash "$FIRST_USER"
-        printf '%s:%s\n' "$FIRST_USER" "$FIRST_PASSWORD_HASH" | chpasswd -e
-        log "created desktop user $FIRST_USER"
+
+    # On ostree/bootc, /home is a symlink to /var/home. If the account still
+    # points at /home/<user>, bash starts in /var/home/<user> and will not
+    # abbreviate the prompt to ~. Normalize the passwd home to the real path.
+    if getent passwd "$FIRST_USER" >/dev/null; then
+        current_home="$(getent passwd "$FIRST_USER" | cut -d: -f6)"
+        if [ "$current_home" = "/home/$FIRST_USER" ] && [ -d "/var/home/$FIRST_USER" ]; then
+            usermod -d "/var/home/$FIRST_USER" "$FIRST_USER"
+            log "updated home for $FIRST_USER to /var/home/$FIRST_USER"
+        fi
     fi
-    install -d -m 0755 /var/lib/niri-image
-    touch /var/lib/niri-image/.user-created
+
+    if [ ! -e /var/lib/niri-image/.user-created ]; then
+        if ! getent passwd "$FIRST_USER" >/dev/null; then
+            useradd -m -d "/var/home/$FIRST_USER" -G wheel -s /bin/bash "$FIRST_USER"
+            printf '%s:%s\n' "$FIRST_USER" "$FIRST_PASSWORD_HASH" | chpasswd -e
+            log "created desktop user $FIRST_USER"
+        fi
+        install -d -m 0755 /var/lib/niri-image
+        touch /var/lib/niri-image/.user-created
+    fi
 fi
