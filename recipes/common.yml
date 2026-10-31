@@ -6,10 +6,30 @@ modules:
       - source: system
         destination: /
 
+  - type: dnf
+    install:
+      packages:
+        - just
+        - powerstat
+
+  - type: dnf
+    repos:
+      cleanup: true
+      copr:
+        - ublue-os/packages
+    install:
+      install-weak-deps: false
+      packages:
+        - bazaar # Flatpak Store
+        - ublue-os-udev-rules
+        - ublue-os-luks
+        - ublue-os-just
+
   # Terra via the upstream-recommended repofrompath + terra-release flow.
   - type: script
     scripts:
-      - install-terra-release.sh
+      - install-3rdrelease.sh
+      - enable-autoupdates.sh
 
   - type: dnf
     install:
@@ -20,15 +40,11 @@ modules:
         - niri
         - noctalia
         - wlroots # noctalia-greeter links libwlroots-0.20 directly.
-        - xdg-desktop-portal-wlr
         - xdg-desktop-portal-gtk
         - xdg-desktop-portal-gnome
 
         # environment
         - fzf
-        # ghostty is from Terra, but its deps (gtk4-layer-shell, ncurses-term,
-        # ghostty-terminfo) are in Fedora. Keep it in the general transaction
-        # so dnf can resolve them; the Terra-only transaction cannot.
         - ghostty
         - tuned-ppd
         - xwayland-satellite
@@ -99,20 +115,19 @@ modules:
         - kanshi
 
         # theme and GUI
-        - paper-icon-theme
         - papirus-icon-theme
+        - adw-gtk3-theme
 
         - repo: terra
           packages:
             - noctalia-greeter
+            - supergfxctl
 
   - type: default-flatpaks
     configurations:
       - scope: user
         repo:
           title: Flathub (user)
-        install:
-          - io.github.kolunmi.Bazaar
 
       - scope: system
         notify: true
