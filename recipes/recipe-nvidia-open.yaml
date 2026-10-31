@@ -1,0 +1,31 @@
+---
+# yaml-language-server: $schema=https://schema.blue-build.org/recipe-v1.json
+# image will be published to ghcr.io/<user>/nouelia-nvidia-open
+name: nouelia-nvidia-open
+description: Fedora 44 bootc image with niri + Noctalia v5 and NVIDIA open drivers
+
+base-image: ghcr.io/blue-build/base-images/fedora-base
+image-version: 44
+
+modules:
+  - from-file: common.yml
+
+  # Pull the prebuilt NVIDIA open kernel modules and userland packages.
+  - type: containerfile
+    snippets:
+      - COPY --from=ghcr.io/ublue-os/akmods-nvidia-open:main-44 /rpms/ /tmp/rpms
+
+  - type: script
+    scripts:
+      - install-nvidia-open.sh
+      - setearlyloading.sh
+      - setdrmvariables.sh
+      - removeunusedrepos.sh
+      - validate-nvidia.sh
+
+  # Validate the shared desktop after the NVIDIA changes.
+  - type: script
+    scripts:
+      - validate-image.sh
+
+  - type: signing

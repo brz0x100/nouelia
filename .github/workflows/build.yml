@@ -10,14 +10,15 @@ on:
 
   pull_request:
   workflow_dispatch: # allow manually triggering builds
-concurrency:
-  # only run one build at a time
-  group: ${{ github.workflow }}-${{ github.ref || github.run_id }}
-  cancel-in-progress: true
 jobs:
   bluebuild:
     name: Build Custom Image
     runs-on: ubuntu-latest
+    concurrency:
+      # Keep a separate queue per recipe so the matrix jobs do not cancel
+      # each other when both images are building.
+      group: ${{ github.workflow }}-${{ github.ref || github.run_id }}-${{ matrix.recipe }}
+      cancel-in-progress: true
     permissions:
       contents: read
       packages: write
@@ -26,8 +27,8 @@ jobs:
       fail-fast: false # stop GH from cancelling all matrix builds if one fails
       matrix:
         recipe:
-          # !! Add your recipes here
           - recipe.yml
+          - recipe-nvidia-open.yaml
     steps:
       # the build is fully handled by the reusable github action
       - name: Build Custom Image
