@@ -1,8 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-chmod 600 /etc/niri-image/firstboot.conf
-chmod 755 /usr/libexec/niri-firstboot
+chmod 755 /usr/libexec/niri-greeter-setup
 
 # niri 26.04 still uses a blanket systemctl import-environment, which is
 # deprecated in systemd 259. Use the upstream dbus/systemd import path.

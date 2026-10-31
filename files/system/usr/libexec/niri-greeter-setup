@@ -1,0 +1,44 @@
+#!/bin/sh
+set -eu
+
+log() {
+    printf 'niri-greeter-setup: %s\n' "$*" >&2
+}
+
+ensure_group_entry() {
+    group="$1"
+    if ! grep -q "^${group}:" /etc/group; then
+        gid="$(getent group "$group" | cut -d: -f3)"
+        if [ -n "$gid" ]; then
+            printf '%s:x:%s:\n' "$group" "$gid" >> /etc/group
+        fi
+    fi
+}
+
+ensure_group_entry video
+ensure_group_entry render
+usermod -aG video,render greetd 2>/dev/null || \
+    log "could not add greetd to video/render"
+
+install -d -o greetd -g greetd -m 0750 /var/lib/noctalia-greeter
+GREETER_USER=greetd noctalia-greeter-apply-appearance --setup-system || \
+    log "greeter appearance setup failed; continuing"
+
+# On ostree/bootc, /home is a symlink to /var/home. Accounts that still point
+# at /home/<user> start sessions in /var/home/<user>, so bash does not
+# abbreviate the prompt to ~. Normalize local users to the real path.
+getent passwd | awk -F: '$3 >= 1000 && $3 < 65534 { print $1 ":" $6 }' |
+while IFS=: read -r user home; do
+    case "$home" in
+        /home/*)
+            real="/var${home}"
+            if [ -d "$real" ]; then
+                if usermod -d "$real" "$user" 2>/dev/null; then
+                    log "updated home for $user to $real"
+                else
+                    log "could not update home for $user"
+                fi
+            fi
+            ;;
+    esac
+done
