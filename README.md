@@ -57,6 +57,35 @@ If you are using an nvidia image on an optimus laptop, run this after installati
 ujust configure-nvidia-optimus
 ```
 
+#### Secure Boot
+Run:
+
+```
+ujust enroll-secure-boot-key
+```
+
+and then reboot. Follow the text to enroll the key.
+
+#### Locale
+
+Since noctalia-greeter would enters a TTY environment transitorily, the locale forcibly set to en_US.
+
+To set your locale manually, create a service `~/.config/systemd/user/force-locale.service` like this:
+
+```
+[Unit]
+Description=Force Locale for User Session
+Before=graphical-session.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/systemctl --user set-environment LANG=YOUR_LOCALE.UTF-8
+RemainAfterExit=yes
+
+[Install]
+WantedBy=graphical-session.target
+```
+
 ## ISO
 
 If build on Fedora Atomic, you can generate an offline ISO with the instructions available [here](https://blue-build.org/how-to/generate-iso/#_top). These ISOs cannot unfortunately be distributed on GitHub for free due to large sizes, so for public projects something else has to be used for hosting.
