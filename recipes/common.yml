@@ -133,7 +133,7 @@ modules:
           title: Flathub (user)
 
       - scope: system
-        notify: true
+        notify: false
         repo:
           title: Flathub (system)
         install:
