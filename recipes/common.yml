@@ -60,6 +60,9 @@ modules:
         - wl-clipboard
         - qt5-qtwayland
         - qt6-qtwayland
+        - fcitx5-qt5
+        - fcitx5-qt
+        - fcitx5-gtk
         - vulkan-validation-layers
         - vulkan-tools
         - google-noto-emoji-fonts
