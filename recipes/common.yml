@@ -32,6 +32,10 @@ modules:
       - enable-autoupdates.sh
 
   - type: dnf
+    repos:
+      cleanup: true
+      copr:
+        - tofik/nwg-shell
     install:
       # Keep niri's recommends (waybar, swaylock) out of the image.
       install-weak-deps: false
@@ -77,6 +81,7 @@ modules:
         - vim
         - msedit
         - p7zip
+        - nwg-look
         - distrobox
         - steam-devices
 
