@@ -82,6 +82,8 @@ modules:
         - msedit
         - p7zip
         - nwg-look
+        - nwg-displays
+        - nwg-icon-picker
         - distrobox
         - steam-devices
 
