@@ -49,6 +49,8 @@ modules:
 
         # environment
         - fzf
+        - fuse
+        - fuse-libs
         - ghostty
         - tuned-ppd
         - xwayland-satellite
