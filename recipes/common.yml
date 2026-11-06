@@ -43,7 +43,7 @@ modules:
         # desktop
         - niri
         - noctalia
-        - wlroots # noctalia-greeter links libwlroots-0.20 directly.
+        - wlroots
         - xdg-desktop-portal-gtk
         - xdg-desktop-portal-gnome
 
@@ -59,9 +59,7 @@ modules:
         - fprintd-pam
         - xdg-user-dirs
         - greetd
-        # dbus-update-activation-environment is required by niri-session.
         - dbus-tools
-        # dbus-run-session is required by the Noctalia greeter.
         - dbus-daemon
         - wl-clipboard
         - qt5-qtwayland
@@ -138,6 +136,7 @@ modules:
   - type: default-flatpaks
     configurations:
       - scope: user
+        notify: false
         repo:
           title: Flathub (user)
 
@@ -152,7 +151,7 @@ modules:
           - org.videolan.VLC
           - io.github.Qalculate
           - org.gnome.gedit
-          - org.gnome.Music
+          - org.gnome.Rhythmbox3
           - net.nokyan.Resources
           - org.gnome.clocks
 
