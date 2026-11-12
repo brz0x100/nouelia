@@ -2,12 +2,12 @@
 # yaml-language-server: $schema=https://schema.blue-build.org/recipe-v1.json
 # image will be published to ghcr.io/<user>/<name>
 name: nouelia
-description: Fedora 44 bootc image with niri + Noctalia v5
+description: Fedora 45 bootc image with niri + Noctalia v5
 
-# Fedora 44 is a hard requirement: noctalia only exists there, and niri 26.04
-# is the first release with background-effect/blur.
+# Fedora 45 ships noctalia 5.x and niri 26.04 (the first release with
+# background-effect/blur), so track it directly.
 base-image: ghcr.io/blue-build/base-images/fedora-base
-image-version: 44
+image-version: 45
 
 modules:
   - from-file: common.yml

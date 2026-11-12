@@ -116,7 +116,6 @@ modules:
         - gvfs-smb
         - gvfs-nfs
         - gvfs-fuse
-        - gvfs-archive
 
         # display
         - wlr-randr
@@ -131,7 +130,9 @@ modules:
         - repo: terra
           packages:
             - noctalia-greeter
-            - supergfxctl
+            # supergfxctl is deprecated upstream and no longer built for
+            # Fedora 45; asusctl is its successor.
+            - asusctl
 
   - type: default-flatpaks
     configurations:
