@@ -160,3 +160,8 @@ modules:
     system:
       enabled:
         - greetd
+
+  # Rebrand PRETTY_NAME while keeping Fedora's <version>.<date>.<build>.
+  - type: script
+    scripts:
+      - set-pretty-name.sh
